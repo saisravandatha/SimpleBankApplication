@@ -193,6 +193,56 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+    @Override
+    public BankResponse transfer(TransferRequest transferRequest) {
+        //get the account to debit and check the account exists or not
+        //check if the amount is not more than the current balance
+        //debit the amount
+        //get the amount to credit
+        //credit the amount
+        boolean isSourceAccountExists = userRepository.existsByAccountNumber(transferRequest.getSourceAccountNumber());
+        boolean isDestinationAccountExists = userRepository.existsByAccountNumber(transferRequest.getDestinationAccountNumber());
+        if(!isSourceAccountExists){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.DEBIT_ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtils.DEBIT_ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+        if(!isDestinationAccountExists){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.CREDIT_ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtils.CREDIT_ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+        User sourceAccountUser = userRepository.findByAccountNumber(transferRequest.getSourceAccountNumber());
+
+        if(sourceAccountUser.getAccountBalance().compareTo(transferRequest.getAmount())>0){
+
+            CreditDebitRequest debitRequest = CreditDebitRequest.builder()
+                    .amount(transferRequest.getAmount())
+                    .accountNumber(transferRequest.getSourceAccountNumber())
+                    .build();
+            BankResponse bankResponse = debitAccount(debitRequest);
+
+            CreditDebitRequest creditRequest = CreditDebitRequest.builder()
+                    .amount(transferRequest.getAmount())
+                    .accountNumber(transferRequest.getDestinationAccountNumber())
+                    .build();
+            creditAccount(creditRequest);
+
+            return bankResponse
+                    ;
+        }else {
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+    }
+
     private BankResponse bankResponse(User user,String responseCode,String responseMessage){
 
         AccountInfo accountInfo = AccountInfo.builder()

@@ -22,7 +22,7 @@ public class AccountUtils {
     public static final String ACCOUNT_CREATE_MESSAGE = "Account has successfully created!!!";
 
     public static final String ACCOUNT_NOT_EXIST_CODE = "003";
-    public static final String ACCOUNT_NOT_EXIST_MESSAGE = " User with the provided Account Number does not exist. Please provide Valid Accunt Number";
+    public static final String ACCOUNT_NOT_EXIST_MESSAGE = "User with the provided Account Number does not exist. Please provide Valid Account Number";
 
     public static final String ACCOUNT_FOUND_CODE = "004";
     public static final String ACCOUNT_FOUND_SUCCESS = "Account Found Successfully!!!";
@@ -30,12 +30,16 @@ public class AccountUtils {
     public static final String ACCOUNT_CREDITED_SUCCESS_CODE = "005";
     public static final String ACCOUNT_CREDITED_SUCCESS_MESSAGE = "Amount Successfully Credited to your account!!!";
 
-    public static final String ACCOUNT_DEBITED_SUCCESS_CODE = "007";
-    public static final String ACCOUNT_DEBITED_SUCCESS_MESSAGE = "Amount has been successfully debited to your account!!!";
-
     public static final String INSUFFICIENT_BALANCE_CODE = "006";
     public static final String INSUFFICIENT_BALANCE_MESSAGE = "Insufficient Balance...";
 
+    public static final String ACCOUNT_DEBITED_SUCCESS_CODE = "007";
+    public static final String ACCOUNT_DEBITED_SUCCESS_MESSAGE = "Amount has been successfully debited from your account!!!";
 
+    public static final String DEBIT_ACCOUNT_NOT_EXIST_CODE = "008";
+    public static final String DEBIT_ACCOUNT_NOT_EXIST_MESSAGE = "User with the provided Account Number does not exist. Please provide Valid Account Number";
+
+    public static final String CREDIT_ACCOUNT_NOT_EXIST_CODE = "009";
+    public static final String CREDIT_ACCOUNT_NOT_EXIST_MESSAGE = "User with the provided Account Number does not exist. Please provide Valid Account Number";
 
 }

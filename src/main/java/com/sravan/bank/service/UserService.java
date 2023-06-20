@@ -1,9 +1,6 @@
 package com.sravan.bank.service;
 
-import com.sravan.bank.dto.BankResponse;
-import com.sravan.bank.dto.CreditDebitRequest;
-import com.sravan.bank.dto.EnquiryRequest;
-import com.sravan.bank.dto.UserRequest;
+import com.sravan.bank.dto.*;
 
 public interface UserService {
 
@@ -16,4 +13,7 @@ public interface UserService {
     BankResponse creditAccount(CreditDebitRequest request);
 
     BankResponse debitAccount(CreditDebitRequest request);
+
+    BankResponse transfer(TransferRequest transfer);
+
 }

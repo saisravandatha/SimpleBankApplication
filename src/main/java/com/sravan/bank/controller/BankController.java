@@ -1,9 +1,6 @@
 package com.sravan.bank.controller;
 
-import com.sravan.bank.dto.BankResponse;
-import com.sravan.bank.dto.CreditDebitRequest;
-import com.sravan.bank.dto.EnquiryRequest;
-import com.sravan.bank.dto.UserRequest;
+import com.sravan.bank.dto.*;
 import com.sravan.bank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,4 +41,8 @@ public class BankController {
         return new ResponseEntity<>(userService.debitAccount(creditDebitRequest),HttpStatus.OK);
     }
 
+    @PostMapping("/transfer")
+    public ResponseEntity<BankResponse> transferAmountBetweenAccounts(@RequestBody TransferRequest transferRequest){
+        return new ResponseEntity<>(userService.transfer(transferRequest),HttpStatus.OK);
+    }
 }
