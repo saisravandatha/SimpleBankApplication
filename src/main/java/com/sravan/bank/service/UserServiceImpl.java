@@ -2,6 +2,7 @@ package com.sravan.bank.service;
 
 import com.sravan.bank.dto.*;
 import com.sravan.bank.entity.User;
+import com.sravan.bank.repository.TransactionRepository;
 import com.sravan.bank.repository.UserRepository;
 import com.sravan.bank.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    TransactionService transactionService;
 
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
@@ -131,6 +135,17 @@ public class UserServiceImpl implements UserService{
                         userToCredit.getFirstName()+ " "+userToCredit.getLastName() + " " + userToCredit.getOtherName(),userToCredit.getAccountBalance()))
                 .build();
         emailService.sendEmailAlert(emailDetails);
+
+        //Saving Every Transaction in Transactions table
+        TransactionDto transactionDto = TransactionDto.builder()
+                .transactionType("CREDIT")
+                .accountNumber(userToCredit.getAccountNumber())
+                .amount(request.getAmount())
+                .status("SUCCESS")
+                .build();
+
+        transactionService.saveTransaction(transactionDto);
+
         return bankResponse(userToCredit,AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE,AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE);
     }
 
@@ -183,8 +198,28 @@ public class UserServiceImpl implements UserService{
                             userToDebit.getFirstName()+ " "+userToDebit.getLastName() + " " + userToDebit.getOtherName(),userToDebit.getAccountBalance()))
                     .build();
             emailService.sendEmailAlert(emailDetails);
+
+            TransactionDto transactionDto = TransactionDto.builder()
+                    .transactionType("DEBIT")
+                    .accountNumber(userToDebit.getAccountNumber())
+                    .amount(request.getAmount())
+                    .status("SUCCESS")
+                    .build();
+
+            transactionService.saveTransaction(transactionDto);
+
             return bankResponse(userToDebit,AccountUtils.ACCOUNT_DEBITED_SUCCESS_CODE,AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE);
         }else {
+
+            TransactionDto transactionDto = TransactionDto.builder()
+                    .transactionType("DEBIT")
+                    .accountNumber(userToDebit.getAccountNumber())
+                    .amount(request.getAmount())
+                    .status("FAILURE")
+                    .build();
+
+            transactionService.saveTransaction(transactionDto);
+
             return BankResponse.builder()
                     .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
                     .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
@@ -232,9 +267,35 @@ public class UserServiceImpl implements UserService{
                     .build();
             creditAccount(creditRequest);
 
-            return bankResponse
-                    ;
+            TransactionDto debitTransactionDto = TransactionDto.builder()
+                    .transactionType("DEBIT")
+                    .accountNumber(debitRequest.getAccountNumber())
+                    .amount(transferRequest.getAmount())
+                    .status("SUCCESS")
+                    .build();
+
+            transactionService.saveTransaction(debitTransactionDto);
+
+            TransactionDto creditTransactionDto = TransactionDto.builder()
+                    .transactionType("CREDIT")
+                    .accountNumber(creditRequest.getAccountNumber())
+                    .amount(transferRequest.getAmount())
+                    .status("SUCCESS")
+                    .build();
+
+            transactionService.saveTransaction(creditTransactionDto);
+
+            return bankResponse;
         }else {
+            TransactionDto debitTransactionDto = TransactionDto.builder()
+                    .transactionType("DEBIT")
+                    .accountNumber(transferRequest.getSourceAccountNumber())
+                    .amount(transferRequest.getAmount())
+                    .status("FAILURE")
+                    .build();
+
+            transactionService.saveTransaction(debitTransactionDto);
+
             return BankResponse.builder()
                     .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
                     .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)

@@ -42,4 +42,7 @@ public class AccountUtils {
     public static final String CREDIT_ACCOUNT_NOT_EXIST_CODE = "009";
     public static final String CREDIT_ACCOUNT_NOT_EXIST_MESSAGE = "User with the provided Account Number does not exist. Please provide Valid Account Number";
 
+    public static final String NO_TRANSACTIONS_FOUND_CODE = "010";
+    public static final String NO_TRANSACTIONS_FOUND_MESSAGE = "No Transactions Found against the provided Account Number. Please use the bank services and make cash less transactions";
+
 }
