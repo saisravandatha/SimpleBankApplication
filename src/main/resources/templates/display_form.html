@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Result</title>
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2 class="h2">Your Account Details</h2>
+<div class="center">
+<table>
+  <tbody>
+  <tr>
+    <td><strong>First Name:</strong></td>
+    <td><span th:text="${formData.firstName}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Last Name:</strong></td>
+    <td><span th:text="${formData.lastName}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Other Name:</strong></td>
+    <td><span th:text="${formData.otherName}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Gender:</strong></td>
+    <td><span th:text="${formData.gender}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Email:</strong></td>
+    <td><span th:text="${formData.email}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Address:</strong></td>
+    <td><span th:text="${formData.address}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>State Of Origin:</strong></td>
+    <td><span th:text="${formData.stateOfOrigin}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Phone Number:</strong></td>
+    <td><span th:text="${formData.phoneNumber}"></span></td>
+  </tr>
+  <tr>
+    <td><strong>Alternative Phone Number:</strong></td>
+    <td><span th:text="${formData.alternativePhoneNumber}"></span></td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;
+      <a th:href="@{Transactions}" class="btn btn-success"> <i class="fa fa-arrow-circle-o-left"></i>&nbsp;Update Details
+      </a></td>
+    <td colspan="2">&nbsp;
+      <a th:href="@{credit-amount}" class="btn btn-success"> <i class="fa fa-arrow-circle-o-left"></i>&nbsp;Credit amount
+      </a>
+    </td>
+    <td colspan="2">&nbsp;
+      <a th:href="@{debit-amount}" class="btn btn-success"> <i class="fa fa-arrow-circle-o-left"></i>&nbsp;Debit amount
+      </a>
+    </td>
+    <td colspan="2">&nbsp;
+      <a th:href="@{balance-enquiry}" class="btn btn-success"> <i class="fa fa-arrow-circle-o-left"></i>&nbsp;Balance Enquiry
+      </a>
+    </td>
+    <td colspan="2">&nbsp;
+      <a th:href="@{transfer}" class="btn btn-success"> <i class="fa fa-arrow-circle-o-left"></i>&nbsp;Transfer
+      </a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

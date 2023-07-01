@@ -1,25 +1,5 @@
 package com.sravan.bank.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itextpdf.text.DocumentException;
-import com.sravan.bank.dto.*;
-import com.sravan.bank.repository.UserRepository;
-import com.sravan.bank.service.PDFGeneratorService;
-import com.sravan.bank.service.UserService;
-import com.sravan.bank.utils.AccountUtils;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.ServletContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.TemplateEngine;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,8 +7,35 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@RestController
-@RequestMapping("/api/user")
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.itextpdf.text.DocumentException;
+import com.sravan.bank.dto.BankResponse;
+import com.sravan.bank.dto.CreditDebitRequest;
+import com.sravan.bank.dto.EnquiryRequest;
+import com.sravan.bank.dto.TransferRequest;
+import com.sravan.bank.dto.UserRequest;
+import com.sravan.bank.repository.UserRepository;
+import com.sravan.bank.service.PDFGeneratorService;
+import com.sravan.bank.service.UserService;
+import com.sravan.bank.utils.AccountUtils;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Controller
 @Tag(name = "User Account Management API's")
 public class BankController {
 
@@ -41,27 +48,39 @@ public class BankController {
    @Autowired
     UserRepository userRepository;
 
-    @PostMapping("/createAccount")
-    @Operation(
-            summary = "Create New User Account",
-            description = "Creating a new user account and assigning a account ID"
-    )
-    @ApiResponse(
-            responseCode = "201",
-            description = "Http Status 201 Created"
-    )
-    public ResponseEntity<BankResponse> createAccount(@RequestBody UserRequest userRequest) {
+    @GetMapping("/")
+    public String showHome(Model model){
+        return "index";
+    }
+    @GetMapping("/create")
+    public ModelAndView showCreateUserForm(Model model) {
+        ModelAndView mav = new ModelAndView("Transactions");
+        mav.addObject("formData",new UserRequest());
+        return mav;
+    }
+
+    @PostMapping("/create-account")
+    public String createAccount1(@ModelAttribute UserRequest userRequest,Model model) {
         BankResponse bankResponse = userService.createAccount(userRequest);
-        return new ResponseEntity<>(bankResponse, HttpStatus.CREATED);
+        model.addAttribute("formData",userRequest);
+        return "display_form";
     }
 
-    @GetMapping("/balanceEnquiry")
-    public ResponseEntity<BankResponse> balanceEnquiry(@RequestBody EnquiryRequest enquiryRequest) {
+
+    @GetMapping("/balance-enquiry")
+    public String balanceEnquiry(@ModelAttribute EnquiryRequest enquiryRequest,Model model) {
         BankResponse bankResponse = userService.balanceEnquiry(enquiryRequest);
-        return new ResponseEntity<>(bankResponse, HttpStatus.FOUND);
+        model.addAttribute("formData",enquiryRequest);
+        return "balance-enquiry";
     }
 
-    @GetMapping("/nameEnquiry")
+//    @GetMapping("/balanceEnquiry")
+//    public ResponseEntity<BankResponse> balanceEnquiry(@RequestBody EnquiryRequest enquiryRequest) {
+//        BankResponse bankResponse = userService.balanceEnquiry(enquiryRequest);
+//        return new ResponseEntity<>(bankResponse, HttpStatus.FOUND);
+//    }
+
+    @GetMapping("/name-enquiry")
     public ResponseEntity<String> nameEnquiry(@RequestBody EnquiryRequest enquiryRequest) {
         return new ResponseEntity<>(String.format("Account Holder name: %s", userService.nameEnquiry(enquiryRequest)), HttpStatus.FOUND);
     }
@@ -122,4 +141,20 @@ public class BankController {
                 .accountInfo(null)
                 .build();
     }
+
+
+//    @PostMapping("/createAccount")
+//    @Operation(
+//            summary = "Create New User Account",
+//            description = "Creating a new user account and assigning a account ID"
+//    )
+//    @ApiResponse(
+//            responseCode = "201",
+//            description = "Http Status 201 Created"
+//    )
+//    public ResponseEntity<BankResponse> createAccount(@RequestBody UserRequest userRequest) {
+//        BankResponse bankResponse = userService.createAccount(userRequest);
+//        return new ResponseEntity<>(bankResponse, HttpStatus.CREATED);
+//    }
+
 }

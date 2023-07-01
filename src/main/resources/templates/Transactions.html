@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>create-account</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+<body>
+    <h1>Create Account</h1>
+    <form th:object="${formData}"
+          th:action="@{/createAccount}"
+          method="post">
+        <div class="form-row">
+            <div class="col-md-6 form-group">
+                <label>firstName</label>
+                <input type="text" class="form-control" th:field="*{firstName}">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>lastName</label>
+                <input type="text" class="form-control" th:field="*{lastName}">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>otherName</label>
+                <input type="text" step="any" class="form-control" th:field="*{otherName}">
+            </div>
+            <div class="col-md-6 form-group">
+                <strong>Gender</strong>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" th:field="*{gender}" id="option1" value="Male">
+                    <label class="form-check-label" for="option1">Male</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" th:field="*{gender}" id="option2" value="Female">
+                    <label class="form-check-label" for="option2">Female</label>
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>address</label>
+                <input type="text" class="form-control" th:field="*{address}">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>stateOfOrigin</label>
+                <input type="text" class="form-control" th:field="*{stateOfOrigin}">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>EmailAddress</label>
+                <input type="email" class="form-control" th:field="*{email}">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Phone Number</label>
+                <input type="number" class="form-control" th:field="*{phoneNumber}">
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Alternative Phone Number</label>
+                <input type="number" class="form-control" th:field="*{alternativePhoneNumber}">
+            </div>
+        </div>
+        <button type="submit">Create Account</button>
+    </form>
+</body>
+</html>
