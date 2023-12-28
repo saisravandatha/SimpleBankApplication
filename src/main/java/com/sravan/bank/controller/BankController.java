@@ -73,7 +73,7 @@ public class BankController {
         model.addAttribute("formData",enquiryRequest);
         return "balance-enquiry";
     }
-
+// Not in use
 //    @GetMapping("/balanceEnquiry")
 //    public ResponseEntity<BankResponse> balanceEnquiry(@RequestBody EnquiryRequest enquiryRequest) {
 //        BankResponse bankResponse = userService.balanceEnquiry(enquiryRequest);
