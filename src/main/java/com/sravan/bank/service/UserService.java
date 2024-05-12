@@ -4,6 +4,8 @@ import com.sravan.bank.dto.*;
 
 public interface UserService {
 
+    BankResponse login(LoginDto loginDto);
+
     BankResponse createAccount(UserRequest userRequest);
 
     BankResponse balanceEnquiry(EnquiryRequest request);

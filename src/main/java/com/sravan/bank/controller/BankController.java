@@ -5,8 +5,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
+import com.sravan.bank.dto.*;
+import com.sravan.bank.entity.Transaction;
+import com.sravan.bank.service.BankStatementService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -15,19 +22,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.itextpdf.text.DocumentException;
-import com.sravan.bank.dto.BankResponse;
-import com.sravan.bank.dto.CreditDebitRequest;
-import com.sravan.bank.dto.EnquiryRequest;
-import com.sravan.bank.dto.TransferRequest;
-import com.sravan.bank.dto.UserRequest;
 import com.sravan.bank.repository.UserRepository;
 import com.sravan.bank.service.PDFGeneratorService;
 import com.sravan.bank.service.UserService;
@@ -37,6 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller
 @Tag(name = "User Account Management API's")
+@RequestMapping("/api/user")
 public class BankController {
 
     @Autowired
@@ -45,7 +44,7 @@ public class BankController {
     @Autowired
     PDFGeneratorService pdfGeneratorService;
 
-   @Autowired
+    @Autowired
     UserRepository userRepository;
 
     @GetMapping("/")
@@ -59,13 +58,33 @@ public class BankController {
         return mav;
     }
 
-    @PostMapping("/create-account")
-    public String createAccount1(@ModelAttribute UserRequest userRequest,Model model) {
-        BankResponse bankResponse = userService.createAccount(userRequest);
-        model.addAttribute("formData",userRequest);
-        return "display_form";
+//    @PostMapping("/create-account")
+//    public String createAccount1(@ModelAttribute UserRequest userRequest,Model model) {
+//        BankResponse bankResponse = userService.createAccount(userRequest);
+//        model.addAttribute("formData",userRequest);
+//        return "display_form";
+//    }
+
+
+    @PostMapping("/login")
+    public BankResponse login(@RequestBody LoginDto loginDto){
+        return userService.login(loginDto);
     }
 
+
+    @PostMapping("/create-account")
+    @Operation(
+            summary = "Create New User Account",
+            description = "Creating a new user account and assigning a account ID"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Http Status 201 Created"
+    )
+    public ResponseEntity<BankResponse> createAccount(@RequestBody UserRequest userRequest) {
+        BankResponse bankResponse = userService.createAccount(userRequest);
+        return new ResponseEntity<>(bankResponse, HttpStatus.CREATED);
+    }
 
     @GetMapping("/balance-enquiry")
     public String balanceEnquiry(@ModelAttribute EnquiryRequest enquiryRequest,Model model) {
@@ -143,18 +162,5 @@ public class BankController {
     }
 
 
-//    @PostMapping("/createAccount")
-//    @Operation(
-//            summary = "Create New User Account",
-//            description = "Creating a new user account and assigning a account ID"
-//    )
-//    @ApiResponse(
-//            responseCode = "201",
-//            description = "Http Status 201 Created"
-//    )
-//    public ResponseEntity<BankResponse> createAccount(@RequestBody UserRequest userRequest) {
-//        BankResponse bankResponse = userService.createAccount(userRequest);
-//        return new ResponseEntity<>(bankResponse, HttpStatus.CREATED);
-//    }
 
 }

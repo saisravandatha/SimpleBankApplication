@@ -1,0 +1,50 @@
+---
+swagger: "2.0"
+info:
+  description: "This is the API documentation of our Simple Bank Application."
+  version: "1.0.6"
+  title: "Simple Bank Application"
+  contact:
+    email: "sravandatha999@gmail.com"
+basePath: "/api/user"
+tags:
+  - name: "transaction"
+    description: "This is used to get detailed transaction history made by the user in a PDF format."
+  - name: "user"
+    description: "This is about the operations can perform by an user."
+paths:
+  /create-account:
+    post:
+      tags:
+        - "user"
+      summary: "creates an account"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/BankResponse"
+definitions:
+  BankResponse:
+    type: object
+    properties:
+      responseCode:
+        type: string
+      responseMessage:
+        type: string
+      accountInfo:
+        $ref: "#/definitions/AccountInfo"
+  AccountInfo:
+    type: object
+    properties:
+      accountName:
+        type: string
+      accountBalance:
+        type: number
+        example: 1452.12
+      accountNumber:
+        type: number
+        example: 1523654789

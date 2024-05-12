@@ -1,16 +1,23 @@
 package com.sravan.bank.service;
 
+import com.sravan.bank.config.JwtTokenProvider;
 import com.sravan.bank.dto.*;
 import com.sravan.bank.entity.User;
 import com.sravan.bank.repository.TransactionRepository;
 import com.sravan.bank.repository.UserRepository;
 import com.sravan.bank.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.emitter.Emitable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -24,13 +31,46 @@ public class UserServiceImpl implements UserService{
     @Autowired
     TransactionService transactionService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
+    @Override
+    public BankResponse login(LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(),loginDto.getPassword())
+        );
+
+        EmailDetails loginAlert = EmailDetails.builder()
+                .subject("You're logged in!")
+                .recipient(loginDto.getEmail())
+                .messageBody("You logged into your account. If you did not initiate the request. Please contact bank.")
+                .build();
+
+        emailService.sendEmailAlert(loginAlert);
+
+
+        return BankResponse.builder()
+                .responseMessage(jwtTokenProvider.generateToken(authentication))
+                .responseCode("Login Success")
+                .build();
+    }
+
+    /*
+    * Creating an account - saving a new user into the db
+    * Check if user already has an account
+    * */
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
-        //Creating an account - saving a new user into the db
-        //Check if user already has an account
+
         if(userRepository.existsByEmail(userRequest.getEmail())){
-            User user = userRepository.findByEmail(userRequest.getEmail());
-            return bankResponse(user,AccountUtils.ACCOUNT_EXISTS_CODE,AccountUtils.ACCOUNT_EXISTS_MESSAGE);
+            Optional<User> user = userRepository.findByEmail(userRequest.getEmail());
+            return bankResponse(user.get(),AccountUtils.ACCOUNT_EXISTS_CODE,AccountUtils.ACCOUNT_EXISTS_MESSAGE);
         }
         User newUser = User.builder()
                 .firstName(userRequest.getFirstName())
@@ -42,6 +82,7 @@ public class UserServiceImpl implements UserService{
                 .accountNumber(AccountUtils.generateAccountNumber())
                 .accountBalance(BigDecimal.ZERO)
                 .email(userRequest.getEmail())
+                .password(passwordEncoder.encode(userRequest.getPassword()))
                 .phoneNumber(userRequest.getPhoneNumber())
                 .alternativePhoneNumber(userRequest.getAlternativePhoneNumber())
                 .status("ACTIVE")
@@ -165,12 +206,14 @@ public class UserServiceImpl implements UserService{
         BigInteger debitAmount = request.getAmount().toBigInteger();
          //we can compare above by availableBalance.intValue() and debitAmount.intValue()
         /*
-        we can't compare bigdecimals using < or >
+        we can't compare big decimals using < or >
         CompareTo returns
         1: when the first BigDecimal is greater than the second BigDecimal.
         0: when the first BigDecimal is equal to the second BigDecimal.
         -1: when the first BigDecimal is less than the second BigDecimal.
         */
+        // Generate OTP
+        // Verify OTP
         if(userToDebit.getAccountBalance().compareTo(request.getAmount()) == 1){
             userToDebit.setAccountBalance(userToDebit.getAccountBalance().subtract(request.getAmount()));
             userToDebit.setModifiedAt(LocalDateTime.now());
